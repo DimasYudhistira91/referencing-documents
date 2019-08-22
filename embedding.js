@@ -14,6 +14,8 @@ const Author = mongoose.model('Author', authorSchema);
 
 const Course = mongoose.model('Course', new mongoose.Schema({
   name: String,
+
+  // menggunakan array pada sub dokumen
   authors: [authorSchema]
 }));
 
@@ -21,7 +23,7 @@ async function createCourse(name, authors) {
   const course = new Course({
     name, 
     authors
-  }); 
+  });
   
   const result = await course.save();
   console.log(result);
@@ -40,10 +42,35 @@ async function listCourses() {
 //   });
 //   // course.author.name = 'Dimas Yudhistira';
 //   // course.save();
-}
+// }
 
 // updateAuthor('5d5e425b52da200a98a42ee9');
-createCourse('Node Course', [
-  new Author({ name: 'Mosh' }),
-  new Author({ name: 'Dimas' })
-]);
+
+
+// menggunakan array pada sub dokumen
+// membuat data array:
+// createCourse('Node Course', [
+//   new Author({ name: 'Mosh' }),
+//   new Author({ name: 'Dimas' })
+// ]);
+
+
+// menggunakan array pada sub dokumen
+// tambah data array:
+async function addAuthor(courseId, author) {
+  const course = await Course.findById(courseId);
+  course.authors.push(author);
+  course.save();
+}
+
+// addAuthor('5d5e95d1f285bf10b0514a3b', new Author({ name: 'Yudhis' }));
+
+// Remove data:
+async function removeAuthor(courseId, authorId) {
+  const course = await Course.findById(courseId);
+  const author = course.authors.id(authorId);
+  author.remove();
+  course.save();
+}
+
+removeAuthor('5d5e95d1f285bf10b0514a3b', '5d5e9a343f7e571b700d0b7a');
